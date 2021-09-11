@@ -1,0 +1,46 @@
+{
+  "name": "frida-ios-dump-requests",
+  "version": "0.1.0",
+  "description": "Dump any iOS application HTTP requests with Frida and Node.js.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "lib:build": "frida-compile ./src/agent/index.ts -o ./src/_agent.js -c",
+    "lib:watch": "frida-compile ./src/agent/index.ts -o ./src/_agent.js -w"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alza54/frida-ios-dump-requests.git"
+  },
+  "keywords": [
+    "frida",
+    "ios",
+    "dump",
+    "intercept",
+    "ssl",
+    "pinning",
+    "http",
+    "requests",
+    "objc"
+  ],
+  "author": "alza54 (https://github.com/alza54)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alza54/frida-ios-dump-requests/issues"
+  },
+  "homepage": "https://github.com/alza54/frida-ios-dump-requests#readme",
+  "dependencies": {
+    "frida": "^14.2.18",
+    "frida-compile": "^10.2.4",
+    "typescript": "^4.4.3",
+    "yargs": "^17.1.1"
+  },
+  "devDependencies": {
+    "@types/frida-gum": "^17.1.0",
+    "@types/node": "^16.9.1",
+    "@types/yargs": "^17.0.2"
+  }
+}
