@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+import { createWriteStream } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 import * as frida from 'frida';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import JSONStream from 'JSONStream';
 
-import { IRequest, IRequestSignal } from './agent/types';
+import { IRequestSignal } from './agent/types';
 
 const argv = yargs(hideBin(process.argv)).options({
   n: { type: 'string', alias: 'name', description: 'Target process name to spawn.' },
@@ -15,7 +17,30 @@ const argv = yargs(hideBin(process.argv)).options({
   filter: { choices: ['NSURLSession', 'NSURLRequest'], alias: 'origin-filter', description: 'Filter intercepted request origin. None by default.' }
 }).parseSync();
 
-const requests: Array<{ request: IRequest; timestamp: number; origin: string }> = [];
+const outputStream = createWriteStream(argv.o, { encoding: 'utf8' });
+const transformStream = JSONStream.stringify();
+
+transformStream.pipe(outputStream);
+
+/**
+ * End output JSON stream on process exit.
+ */
+async function exitHandler (
+  options: { exit?: boolean },
+  exitCode: number
+): Promise<void> {
+  if (typeof exitCode === 'number') {
+    console.log('[+] Exit code:', exitCode);
+  }
+
+  console.log('[+] Exit handled, ending stream...');
+
+  transformStream.end();
+
+  if (options.exit) {
+    process.exit();
+  }
+}
 
 async function handleRequest ({ payload: request, timestamp, origin }: IRequestSignal): Promise<void> {
   console.log(`[+] HTTP ${request.method} request: ${request.url}`);
@@ -28,9 +53,8 @@ async function handleRequest ({ payload: request, timestamp, origin }: IRequestS
     return;
   }
 
-  requests.push({ request, timestamp, origin });
-
-  await fs.writeFile(argv.o, JSON.stringify(requests), 'utf8');
+  // @ts-expect-error
+  transformStream.write({ request, timestamp, origin });
 }
 
 async function main (): Promise<void> {
@@ -74,3 +98,6 @@ async function main (): Promise<void> {
 
 main()
   .catch(console.error);
+
+// catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(undefined, { exit: true }));

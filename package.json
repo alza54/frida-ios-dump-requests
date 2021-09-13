@@ -33,13 +33,15 @@
   },
   "homepage": "https://github.com/alza54/frida-ios-dump-requests#readme",
   "dependencies": {
-    "frida": "^14.2.18",
+    "JSONStream": "^1.3.5",
+    "frida": "^15.1.1",
     "frida-compile": "^10.2.4",
     "typescript": "^4.4.3",
     "yargs": "^17.1.1"
   },
   "devDependencies": {
     "@types/frida-gum": "^17.1.0",
+    "@types/jsonstream": "^0.8.30",
     "@types/node": "^16.9.1",
     "@types/yargs": "^17.0.2"
   }
