@@ -56,6 +56,8 @@ node dist/index.js -n com.toyopagroup.picaboo -o snapchat.json --body-type base6
 node dist/index.js -p 4026 -o discord.json --body-type base64
 ```
 
+### Use Ctrl+C to stop the script and save requests JSON output.
+
 ## Filter option
 Different apps use different ways to send HTTP requests. When you set `--filter NSURLSession` you will avoid dumping of unsent/duplicated HTTP requests, but for many apps such as Facebook, Instagram, Snapchat you won't see any requests dumped. `NSURLSession` filter however relies on `dealloc` method and  might dump unsent (trash) requests as well.
 
